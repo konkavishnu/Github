@@ -3,6 +3,9 @@ package com.example.firstapi.Controller;
 import com.example.firstapi.Services.ProductService;
 import com.example.firstapi.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,8 +23,9 @@ public class ProductController {
     }
 
     @GetMapping()
-    public List<Product> getAllProducts(){
-       return productService.getAllProducts();
+    public ResponseEntity <List<Product>> getAllProducts(){
+        ResponseEntity<List<Product>> response = new ResponseEntity<>(productService.getAllProducts(), HttpStatus.NOT_FOUND);
+       return response;
     }
 
     @GetMapping("/{id}") // to get details of a particular object
@@ -45,7 +49,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}") // to remove a full object
-    public void deleteProduct(@PathVariable ("id") Long id){
+    public ResponseEntity<Void> deleteProduct(@PathVariable ("id") Long id){
+        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
