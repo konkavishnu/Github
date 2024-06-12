@@ -1,12 +1,13 @@
 package com.example.firstapi.Services;
 
+import com.example.firstapi.Exceptions.ProductNotExistException;
 import com.example.firstapi.models.Product;
 
 import java.util.List;
 
 public interface ProductService {
 
-    Product getSingleProduct(Long id);
+    Product getSingleProduct(Long id) throws ProductNotExistException;
 
     List<Product> getAllProducts();
 

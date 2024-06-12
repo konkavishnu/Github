@@ -1,6 +1,7 @@
 package com.example.firstapi.Services;
 
 import com.example.firstapi.DTO.FakeStoreProductDTO;
+import com.example.firstapi.Exceptions.ProductNotExistException;
 import com.example.firstapi.models.Category;
 import com.example.firstapi.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Service
+@Service("FakestoreProductService")
 public class FakestoreProductService implements ProductService{
 
 
@@ -38,9 +39,14 @@ public class FakestoreProductService implements ProductService{
     }
 
     @Override
-    public Product getSingleProduct(Long id) {
-        FakeStoreProductDTO productDTO = restTemplate.getForObject("https://fakestoreapi.com/products/1"
+    public Product getSingleProduct(Long id) throws ProductNotExistException {
+        FakeStoreProductDTO productDTO = restTemplate.getForObject("https://fakestoreapi.com/products/"
                 + id, FakeStoreProductDTO.class);
+        if (productDTO == null) {
+            throw new ProductNotExistException(
+                    "Product with id: "+id+" does not exist."
+            );
+        }
         return convertFakeStroreProductDTOToProduct(productDTO);
     }
 

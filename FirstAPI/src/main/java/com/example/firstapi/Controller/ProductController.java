@@ -1,8 +1,10 @@
 package com.example.firstapi.Controller;
 
+import com.example.firstapi.Exceptions.ProductNotExistException;
 import com.example.firstapi.Services.ProductService;
 import com.example.firstapi.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ public class ProductController {
     private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(@Qualifier("selfProductService") ProductService productService) { //--> Since there is 2 implementation with "ProductService" we are telling the controller to take a particular implementation by using @Qualifier.
         this.productService = productService;
     }
 
@@ -29,8 +31,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}") // to get details of a particular object
-    public Product getProductById(@PathVariable ("id") Long id){
-        return productService.getSingleProduct(id);
+    public ResponseEntity<Product> getProductById(@PathVariable ("id") Long id) throws ProductNotExistException {
+        return new ResponseEntity<>(productService.getSingleProduct(id),HttpStatus.OK);
     }
 
     @PostMapping() // to create or Save a new object
@@ -52,6 +54,11 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(@PathVariable ("id") Long id){
         return new ResponseEntity<>(HttpStatus.OK);
 
+    }
+
+    @ExceptionHandler(ProductNotExistException.class) //--> We can also throw exception in controller level , but if we do that this will handle the exception rather the one in controller advice.
+    public ResponseEntity<Void> handleProductNotExistException(){
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 }
